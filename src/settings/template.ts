@@ -11,6 +11,7 @@ import {
   siteNameFromUrl,
   snakeToCamelCase,
 } from '../util'
+import { HighlightManagerId } from '.'
 
 type FunctionMap = {
   [key: string]: () => (
@@ -182,10 +183,11 @@ export const renderLabels = (labels?: LabelView[]) => {
   }))
 }
 
-export const renderArticleContnet = async (
+export const renderArticleContent = async (
   article: Article,
   template: string,
   highlightOrder: string,
+  highlightManagerId: HighlightManagerId | undefined,
   dateHighlightedFormat: string,
   dateSavedFormat: string,
   isSingleFile: boolean,
@@ -213,14 +215,25 @@ export const renderArticleContnet = async (
     })
   }
   const highlights: HighlightView[] = articleHighlights.map((highlight) => {
+    const highlightColor = highlight.color ?? 'yellow'
+    const highlightRenderOption = highlightManagerId
+      ? {
+          highlightColor: highlightColor,
+          highlightManagerId: highlightManagerId,
+        }
+      : null
     return {
-      text: formatHighlightQuote(highlight.quote, template),
+      text: formatHighlightQuote(
+        highlight.quote,
+        template,
+        highlightRenderOption,
+      ),
       highlightUrl: `https://omnivore.app/me/${article.slug}#${highlight.id}`,
       highlightID: highlight.id.slice(0, 8),
       dateHighlighted: formatDate(highlight.updatedAt, dateHighlightedFormat),
       note: highlight.annotation ?? undefined,
       labels: renderLabels(highlight.labels),
-      color: highlight.color ?? 'yellow',
+      color: highlightColor,
       positionPercent: highlight.highlightPositionPercent,
       positionAnchorIndex: highlight.highlightPositionAnchorIndex + 1, // PDF page numbers start at 1
     }

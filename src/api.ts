@@ -81,6 +81,14 @@ export interface Highlight {
   highlightPositionAnchorIndex: number
 }
 
+// Highlight colors currently supported in Omnivore
+export enum HighlightColors {
+  Yellow = 'yellow',
+  Red = 'red',
+  Green = 'green',
+  Blue = 'blue',
+}
+
 const requestHeaders = (apiKey: string) => ({
   'Content-Type': 'application/json',
   authorization: apiKey,
